@@ -1,0 +1,111 @@
+"use client"
+
+import * as React from "react"
+import Link from "next/link"
+import { MenuIcon } from "lucide-react"
+
+import { useSession } from "@/lib/auth-client"
+import type { NavItem } from "@/lib/site-config"
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
+  useAuthDialog,
+  type AuthMode,
+} from "@/components/auth/auth-dialog-provider"
+import { DocsyLogo } from "@/components/brand/docsy-logo"
+import { SearchDocsButton } from "@/components/search/search-docs-button"
+
+function MobileNav({
+  items,
+  className,
+}: {
+  items: NavItem[]
+  className?: string
+}) {
+  const [open, setOpen] = React.useState(false)
+  const { data: session } = useSession()
+  const authDialog = useAuthDialog()
+
+  // The auth dialog can't open until the sheet has finished closing: the sheet
+  // restores focus to its trigger on close, which would yank focus straight
+  // back out of a dialog opened in the same tick.
+  const [queuedMode, setQueuedMode] = React.useState<AuthMode | null>(null)
+
+  function requestAuth(mode: AuthMode) {
+    setQueuedMode(mode)
+    setOpen(false)
+  }
+
+  return (
+    <Sheet
+      open={open}
+      onOpenChange={setOpen}
+      onOpenChangeComplete={(isOpen) => {
+        if (isOpen || !queuedMode) return
+        authDialog.open(queuedMode)
+        setQueuedMode(null)
+      }}
+    >
+      <SheetTrigger
+        render={<Button variant="ghost" size="icon" className={className} />}
+      >
+        <MenuIcon />
+        <span className="sr-only">Open menu</span>
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="data-[side=right]:w-full data-[side=right]:sm:max-w-none"
+      >
+        <SheetHeader>
+          <SheetTitle>
+            <DocsyLogo />
+            <span className="sr-only">Docsy navigation</span>
+          </SheetTitle>
+        </SheetHeader>
+        <div className="px-4">
+          <SearchDocsButton
+            className="w-full justify-start"
+            showShortcut={false}
+          />
+        </div>
+        <nav className="flex flex-col gap-1 px-4">
+          {items.map((item) => (
+            <SheetClose
+              key={item.href}
+              nativeButton={false}
+              render={
+                <Link
+                  href={item.href}
+                  className="rounded-lg px-2 py-2 text-base text-muted-foreground transition-colors hover:bg-muted hover:text-brand"
+                />
+              }
+            >
+              {item.label}
+            </SheetClose>
+          ))}
+        </nav>
+        {/* Signed in, the header avatar owns account actions — no duplicate. */}
+        {!session && (
+          <SheetFooter className="grid grid-cols-2">
+            <Button variant="outline" onClick={() => requestAuth("sign-in")}>
+              Sign in
+            </Button>
+            <Button onClick={() => requestAuth("sign-up")}>
+              Try Docsy free
+            </Button>
+          </SheetFooter>
+        )}
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+export { MobileNav }

@@ -1,0 +1,364 @@
+// Prisma 7: the connection URL lives in `prisma.config.ts`, not in this file.
+//
+// The models below are owned by Better Auth. Re-run `npm run auth:generate`
+// after changing plugins or auth options, then create a migration.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  members     Member[]
+  invitations Invitation[]
+
+  role       String?
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  activeOrganizationId String?
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model RateLimit {
+  id          String @id
+  key         String
+  count       Int
+  lastRequest BigInt
+
+  @@unique([key])
+  @@map("rateLimit")
+}
+
+model Organization {
+  id          String       @id
+  name        String
+  slug        String
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  members     Member[]
+  invitations Invitation[]
+
+  @@unique([slug])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  createdAt      DateTime
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String       @default("pending")
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitation")
+}
+
+/// Not a Better Auth model. Profile pictures live in Postgres and are served
+/// by `app/api/avatar/[userId]`; `user.image` holds that URL.
+model Avatar {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  contentType String
+  data        Bytes
+  updatedAt   DateTime @updatedAt
+
+  @@map("avatar")
+}
+
+/// Not a Better Auth model. The admin console's activity log: who did what to
+/// the app, and when.
+///
+/// Deliberately append-only and deliberately denormalised. `actorName` and
+/// `description` are snapshots of how things read *at the time* — an audit
+/// entry that changes when somebody renames themselves, or empties when an
+/// account is deleted, is not much of an audit entry. Nothing cascades into
+/// this table for the same reason.
+model AdminLog {
+  id          String   @id @default(cuid())
+  /// The admin who acted. Null means the app itself did it — "System".
+  actorId     String?
+  /// Their name as it was then. Null renders as "System".
+  actorName   String?
+  /// Machine-readable slug, e.g. `user.created` — for filtering and the CSV.
+  action      String
+  /// The sentence after the actor's name, written when the event happened.
+  description String
+  /// What was acted on, when there is one thing: a user id, usually.
+  targetId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("adminLog")
+}
+
+/// Not a Better Auth model, and the only single-row table here: the app's own
+/// switches, set from the admin console's Security tab. One row, id `app`.
+///
+/// Defaults matter — they're what the app runs on before an admin ever opens
+/// the page, and `getAppSettings` returns them when the row is missing rather
+/// than failing closed and locking everyone out.
+model AppSetting {
+  id                  String   @id @default("app")
+  /// Off closes public registration. Admins can still create accounts.
+  allowSignUps        Boolean  @default(true)
+  /// Stored, not yet enforceable — there is no two-factor sign-in to require.
+  enforceTwoFactor    Boolean  @default(false)
+  /// On, only admins get past the `/app` boundary.
+  maintenanceMode     Boolean  @default(false)
+  /// Months of chat history kept. Null keeps everything for ever.
+  chatRetentionMonths Int?     @default(12)
+  /// The admin who last saved the page.
+  updatedByUserId     String?
+  updatedAt           DateTime @updatedAt
+
+  @@map("appSetting")
+}
+
+/// Not a Better Auth model. What Stripe knows about a workspace's subscription,
+/// mirrored here so rendering a page never has to call Stripe. Like `Avatar`,
+/// it carries a plain `organizationId` rather than a relation, so
+/// `auth:generate` can rewrite the models above without knowing about it.
+///
+/// Written by the webhook handler and by the checkout-return reconcile, both of
+/// which take their values from Stripe — never from a client request. That is
+/// what makes `planId` an entitlement rather than a wish: a row only reaches a
+/// paid plan with an entitled `status` once Stripe says the money arrived.
+model Subscription {
+  id                   String    @id @default(cuid())
+  /// One workspace, one subscription.
+  organizationId       String    @unique
+  /// Created before checkout, so an abandoned checkout still leaves a customer
+  /// to reuse. On its own it grants nothing. Null on a workspace whose plan was
+  /// granted from the admin console — there's nobody to bill.
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  /// Stripe's status verbatim — `active`, `trialing`, `past_due`, `canceled`.
+  /// Null until a subscription exists. See `isEntitled` in `lib/billing.ts`.
+  status               String?
+  /// `free`, `pro` or `business`, resolved from the price Stripe billed.
+  planId               String    @default("free")
+  priceId              String?
+  /// `monthly` or `annual`, for the "$19 / month" line.
+  interval             String?
+  /// End of the paid period: the renewal date, or the day access lapses when
+  /// `cancelAtPeriodEnd` is set.
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  /// The card on file, for the payment-method row. Brand and last four only —
+  /// the number never touches this database.
+  cardBrand            String?
+  cardLast4            String?
+  cardExpMonth         Int?
+  cardExpYear          Int?
+  /// Where this entitlement came from: `stripe` when money moved, `admin` when
+  /// an admin comped it from the console. Kept explicit rather than inferred
+  /// from a null `stripeSubscriptionId`, because the Billing tab has to say
+  /// which one it is and never show a comped plan as a paid one.
+  source               String    @default("stripe")
+  /// The admin who granted it. Null on everything Stripe wrote.
+  grantedByUserId      String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("subscription")
+}
+
+/// Not a Better Auth model. Uploaded sources live in Postgres beside the text
+/// Claude reads. Like `Avatar`, these carry plain `userId`/`organizationId`
+/// columns rather than relations, so `auth:generate` can rewrite the models
+/// above without needing to know about them.
+model Document {
+  id             String         @id @default(cuid())
+  organizationId String
+  userId         String
+  name           String
+  contentType    String
+  sizeBytes      Int
+  /// Pages for a PDF; null for formats without pagination.
+  pageCount      Int?
+  /// The original upload, kept so it can be served back and re-read later.
+  data           Bytes
+  /// Extracted plain text. Null for PDFs, which go to Claude as-is so it sees
+  /// the layout rather than a flattened transcription.
+  text           String?
+  status         DocumentStatus @default(PROCESSING)
+  failureReason  String?
+  createdAt      DateTime       @default(now())
+  chats          ChatDocument[]
+
+  @@index([organizationId, createdAt])
+  @@map("document")
+}
+
+enum DocumentStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+model Chat {
+  id             String         @id @default(cuid())
+  organizationId String
+  userId         String
+  title          String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  documents      ChatDocument[]
+  messages       Message[]
+
+  @@index([organizationId, updatedAt])
+  @@map("chat")
+}
+
+/// Join row. `position` is the citation index — the `[n]` markers in an answer
+/// resolve through it.
+model ChatDocument {
+  chatId     String
+  documentId String
+  position   Int
+  chat       Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([chatId, documentId])
+  @@index([documentId])
+  @@map("chatDocument")
+}
+
+model Message {
+  id        String           @id @default(cuid())
+  chatId    String
+  chat      Chat             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role      MessageRole
+  content   String
+  /// Citations Claude returned, resolved to `{ index, document, page }`.
+  sources   Json?
+  /// The seeded brief-analysis request: sent to Claude for context, never
+  /// rendered in the thread.
+  hidden    Boolean          @default(false)
+  /// Was this answer useful? Null until someone says. Only ever set on an
+  /// ASSISTANT row.
+  feedback  MessageFeedback?
+  createdAt DateTime         @default(now())
+
+  @@index([chatId, createdAt])
+  @@map("message")
+}
+
+/// Not a Better Auth model, and deliberately not a relation of anything.
+///
+/// The allowance ledger: one row per question the workspace is charged for.
+/// `Message` can't be that record — clearing chat history deletes it, which
+/// would hand back the month's allowance along with the conversations. Nothing
+/// cascades into this table, so the only thing that moves the month's usage is
+/// asking another question.
+model QuestionEvent {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  /// The chat it was asked in. A plain column, not a relation: the chat may
+  /// have been deleted, and this row has to outlive it.
+  chatId         String?
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId, createdAt])
+  @@map("questionEvent")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum MessageFeedback {
+  UP
+  DOWN
+}
