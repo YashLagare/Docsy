@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server"
 
-import { isAnthropicConfigured } from "@/lib/anthropic"
-import { requireApiContext } from "@/lib/api-session"
 import { streamAnswer } from "@/lib/answer"
+import { requireApiContext } from "@/lib/api-session"
 import { allowanceSpentMessage, type ChatSource } from "@/lib/chat"
 import {
-  addMessage,
-  getChat,
-  getChatDocuments,
-  getChatHistory,
-  getQuestionAllowance,
-  recordQuestion,
+    addMessage,
+    getChat,
+    getChatDocuments,
+    getChatHistory,
+    getQuestionAllowance,
+    recordQuestion,
 } from "@/lib/chat-store"
+import { isOpenRouterConfigured } from "@/lib/openrouter"
 
 /** Reading a long brief and writing the briefing takes minutes, not seconds. */
 export const maxDuration = 300
@@ -34,9 +34,9 @@ export async function POST(
   const guard = await requireApiContext()
   if (!guard.ok) return guard.response
 
-  if (!isAnthropicConfigured()) {
+  if (!isOpenRouterConfigured()) {
     return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY isn't set, so Docsy can't answer yet." },
+      { error: "OPENROUTER_API_KEY isn't set, so Docsy can't answer yet." },
       { status: 503 }
     )
   }
@@ -146,7 +146,7 @@ export async function POST(
           }
 
           if (!answer.trim()) {
-            send({ type: "error", value: "Claude returned an empty answer." })
+            send({ type: "error", value: "OpenRouter returned an empty answer." })
             return
           }
 

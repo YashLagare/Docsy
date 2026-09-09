@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 
-import { ANTHROPIC_BRIEF_ANALYSIS_PROMPT } from "@/lib/anthropic"
 import { requireApiContext } from "@/lib/api-session"
-import { clearChats, createChat, readyDocumentIds } from "@/lib/chat-store"
 import { MAX_DOCUMENTS_PER_CHAT } from "@/lib/chat"
+import { clearChats, createChat, readyDocumentIds } from "@/lib/chat-store"
+import { OPENROUTER_BRIEF_ANALYSIS_PROMPT } from "@/lib/openrouter"
 
 /** "Website_Brief_v2.pdf" → "Website Brief v2". */
 function titleFromDocument(name: string) {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     userId: guard.context.userId,
     documentIds: ordered.map((document) => document.id),
     title: titleFromDocument(ordered[0].name),
-    seedPrompt: ANTHROPIC_BRIEF_ANALYSIS_PROMPT,
+    seedPrompt: OPENROUTER_BRIEF_ANALYSIS_PROMPT,
   })
 
   return NextResponse.json({ id: chat.id }, { status: 201 })

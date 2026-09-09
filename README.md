@@ -33,9 +33,9 @@
 
 ## 1 Executive Summary
 
-Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported documents, create chats, receive streamed Claude answers with citations, search workspace data, manage account settings, and view usage information.
+Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported documents, create chats, receive streamed OpenRouter answers with source markers, search workspace data, manage account settings, and view usage information.
 
-The application is implemented as a modular Next.js monolith. The browser renders App Router pages and client components. Server routes enforce session, workspace, and administrator checks before calling application stores, Better Auth, Stripe, Resend, Anthropic, or Prisma. Neon PostgreSQL stores authentication records, workspace data, uploaded document bytes, chat data, usage events, subscriptions, avatars, settings, and audit logs.
+The application is implemented as a modular Next.js monolith. The browser renders App Router pages and client components. Server routes enforce session, workspace, and administrator checks before calling application stores, Better Auth, Stripe, Resend, OpenRouter, or Prisma. Neon PostgreSQL stores authentication records, workspace data, uploaded document bytes, chat data, usage events, subscriptions, avatars, settings, and audit logs.
 
 ## 2 Project Overview
 
@@ -53,7 +53,7 @@ Implemented scope includes:
 - Workspace onboarding and organization membership.
 - Document upload, download, listing, and deletion.
 - PDF, DOCX, TXT, and Markdown document support.
-- Chat creation, document attachment, streamed Claude answers, citations, and answer feedback.
+- Chat creation, document attachment, streamed OpenRouter answers, source markers, and answer feedback.
 - Workspace search, usage tracking, account settings, and account deletion.
 - Administrator user, settings, plan, maintenance, retention, and audit-log operations.
 - Optional Stripe Checkout, Customer Portal, and subscription webhooks.

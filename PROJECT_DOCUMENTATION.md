@@ -33,9 +33,9 @@
 
 ## 1 Executive Summary
 
-Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported documents, create chats, receive streamed Claude answers with citations, search workspace data, manage account settings, and view usage information.
+Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported documents, create chats, receive streamed OpenRouter answers with source markers, search workspace data, manage account settings, and view usage information.
 
-The application is implemented as a modular Next.js monolith. The browser renders App Router pages and client components. Server routes enforce session, workspace, and administrator checks before calling application stores, Better Auth, Stripe, Resend, Anthropic, or Prisma. Neon PostgreSQL stores authentication records, workspace data, uploaded document bytes, chat data, usage events, subscriptions, avatars, settings, and audit logs.
+The application is implemented as a modular Next.js monolith. The browser renders App Router pages and client components. Server routes enforce session, workspace, and administrator checks before calling application stores, Better Auth, Stripe, Resend, OpenRouter, or Prisma. Neon PostgreSQL stores authentication records, workspace data, uploaded document bytes, chat data, usage events, subscriptions, avatars, settings, and audit logs.
 
 ## 2 Project Overview
 
@@ -53,7 +53,7 @@ Implemented scope includes:
 - Workspace onboarding and organization membership.
 - Document upload, download, listing, and deletion.
 - PDF, DOCX, TXT, and Markdown document support.
-- Chat creation, document attachment, streamed Claude answers, citations, and answer feedback.
+- Chat creation, document attachment, streamed OpenRouter answers, source markers, and answer feedback.
 - Workspace search, usage tracking, account settings, and account deletion.
 - Administrator user, settings, plan, maintenance, retention, and audit-log operations.
 - Optional Stripe Checkout, Customer Portal, and subscription webhooks.
@@ -69,7 +69,7 @@ The repository does not implement separate object storage, a vector database, an
 | Authentication | Better Auth server configuration, client session access, email flows, and OAuth providers |
 | Workspace | Organization onboarding, dashboard shell, navigation, settings, and account management |
 | Library | Document upload, storage, extraction status, download, and deletion |
-| Chat | Chat creation, document scope, Claude question answering, citations, and feedback |
+| Chat | Chat creation, document scope, OpenRouter question answering, source markers, and feedback |
 | Search | Workspace command-palette search over chats and documents |
 | Billing | Stripe Checkout, Customer Portal, entitlement reconciliation, and webhook processing |
 | Administration | User creation, settings, plan grants, maintenance controls, retention, and activity logs |
@@ -95,12 +95,12 @@ The implemented user roles are regular authenticated workspace members and appli
 | Database | PostgreSQL on Neon |
 | ORM and driver | Prisma 7 with `@prisma/adapter-neon` and `@neondatabase/serverless` |
 | Authentication | Better Auth with Prisma persistence |
-| AI provider | Anthropic Claude through `@anthropic-ai/sdk` |
+| AI provider | OpenRouter streaming chat-completions API |
 | Email | Resend |
 | Payments | Stripe Checkout, Customer Portal, and webhooks |
 | Styling | Tailwind CSS v4, shadcn/ui, Base UI, Tailwind Merge, Tailwind Animate |
 | UI components | Lucide React, Radix-style component primitives through the configured UI stack |
-| Document processing | Mammoth for DOCX text extraction; PDF bytes are sent to Claude as PDFs |
+| Document processing | Mammoth for DOCX text extraction; PDF bytes are stored but not text-extracted for OpenRouter |
 | Markdown | `react-markdown` and `remark-gfm` |
 | Build and validation | Next.js build, TypeScript compiler, ESLint, Prettier |
 | Deployment | Railway Railpack configuration |
@@ -491,7 +491,7 @@ Admin user creation returns `400` for validation failures, `409` for duplicate e
 | --- | --- | --- |
 | Neon | Hosted PostgreSQL database and serverless database driver | `DATABASE_URL`, `DATABASE_URL_UNPOOLED` or `DIRECT_URL` |
 | Better Auth | Authentication, sessions, organizations, OAuth, verification, and password flows | `BETTER_AUTH_SECRET`, URLs, and optional OAuth credentials |
-| Anthropic | Claude document question answering | `ANTHROPIC_API_KEY` |
+| OpenRouter | Document question answering through a configurable model | `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` |
 | Resend | Verification and password-reset email delivery | `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO` |
 | Stripe | Checkout, Customer Portal, subscription webhooks, and paid entitlements | Stripe secret, webhook secret, and price IDs |
 | Google OAuth | Optional social sign-in provider | Google client ID and secret |

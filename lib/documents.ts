@@ -1,5 +1,4 @@
 import mammoth from "mammoth"
-import type Anthropic from "@anthropic-ai/sdk"
 
 import { formatBytes } from "@/lib/chat"
 
@@ -19,8 +18,8 @@ const DOCX_TYPE =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 /**
- * `pdf` goes to Claude untouched so it reads the layout rather than a
- * flattened transcription; the rest are extracted to text first.
+ * PDFs retain their bytes for storage; the remaining supported formats are
+ * extracted to text for the OpenRouter prompt.
  */
 type DocumentKind = "pdf" | "docx" | "text"
 
@@ -72,12 +71,12 @@ function countPdfPages(bytes: Buffer) {
 }
 
 export type ExtractedDocument = {
-  /** Null for PDFs, which Claude reads natively. */
+  /** Null for PDFs, which are not text-extracted by the current pipeline. */
   text: string | null
   pageCount: number | null
 }
 
-/** Pulls out whatever Claude will need to read, or explains why it can't. */
+/** Pulls out whatever the text-based Q&A pipeline can read. */
 export async function extractDocument(
   bytes: Buffer,
   kind: DocumentKind
@@ -107,45 +106,11 @@ export function documentMeta(sizeBytes: number, pageCount: number | null) {
   return pageCount ? `${size} · ${pageCount} pages` : size
 }
 
-/** The columns needed to hand a stored document to Claude. */
+/** The columns needed to hand a stored document to the Q&A provider. */
 export type DocumentPayload = {
   id: string
   name: string
   contentType: string
   data: Uint8Array
   text: string | null
-}
-
-/**
- * A document content block with citations turned on, so Claude returns
- * structured references — real page numbers rather than ones it recalled.
- */
-export function toDocumentBlock(
-  document: DocumentPayload
-): Anthropic.Beta.Messages.BetaRequestDocumentBlock {
-  const shared = {
-    type: "document" as const,
-    title: document.name,
-    citations: { enabled: true },
-  }
-
-  if (document.text === null) {
-    return {
-      ...shared,
-      source: {
-        type: "base64",
-        media_type: "application/pdf",
-        data: Buffer.from(document.data).toString("base64"),
-      },
-    }
-  }
-
-  return {
-    ...shared,
-    source: {
-      type: "text",
-      media_type: "text/plain",
-      data: document.text,
-    },
-  }
 }
