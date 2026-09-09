@@ -103,7 +103,7 @@ The implemented user roles are regular authenticated workspace members and appli
 | Document processing | Mammoth for DOCX text extraction; PDF bytes are stored but not text-extracted for OpenRouter |
 | Markdown | `react-markdown` and `remark-gfm` |
 | Build and validation | Next.js build, TypeScript compiler, ESLint, Prettier |
-| Deployment | Railway Railpack configuration |
+| Deployment | Vercel-compatible Next.js deployment; no Vercel manifest is checked in |
 | Runtime | Node.js 22 or newer |
 | Testing | No test framework or checked-in automated test suite is configured |
 
@@ -135,7 +135,7 @@ Docsy is a client-server monolith built with the Next.js App Router. Server-rend
         +---------------------------+                       +----------------------+
 ```
 
-The application does not contain independently deployable frontend and backend services. The checked-in deployment configuration defines one Railway service.
+The application does not contain independently deployable frontend and backend services. The Next.js application can deploy as one Vercel project. No Vercel deployment manifest is checked in.
 
 ## 5 Repository Structure
 
@@ -167,7 +167,7 @@ Important root files:
 | `prisma.config.ts` | Prisma schema and migration connection configuration |
 | `next.config.ts` | Next.js configuration |
 | `proxy.ts` | Optimistic cookie gate for signed-in routes |
-| `railway.json` | Railway build and deployment commands |
+| `vercel.json` | Not present; Vercel uses project settings and Next.js detection |
 | `.env.example` | Runtime configuration template |
 | `AGENTS.md` | Repository conventions and architecture notes |
 
@@ -624,31 +624,56 @@ The repository does not define an automated test command or checked-in test suit
 
 ## 17 Deployment
 
-Railway is the only checked-in hosting configuration. `railway.json` selects the Railpack builder, runs Prisma migrations before deployment, starts Next.js with `npm run start`, and restarts the service on failure up to three times.
+Vercel is the intended hosting platform for the Next.js application. The repository does not contain a `vercel.json`; Vercel can detect the Next.js project automatically. Neon remains the PostgreSQL provider, while OpenRouter, Resend, Stripe, and optional OAuth providers remain external integrations.
 
 ```text
 +-----------------------+        deploy        +--------------------------+
-| Railway project       | -------------------> | Railpack build          |
-| Environment variables |                       | npm install / build     |
+| Vercel project        | -------------------> | Next.js build            |
+| Environment variables |                       | Install, compile, bundle |
 +-----------+-----------+                       +------------+-------------+
             |                                                |
-            | pre-deploy                                      | start
+            | runtime                                         | HTTPS requests
             v                                                v
 +-----------------------+                       +--------------------------+
-| Prisma migration      |                       | Next.js production       |
-| npx prisma migrate    |                       | npm run start            |
-| deploy                |                       | App pages and APIs       |
-+-----------+-----------+                       +------------+-------------+
-            |                                                |
-            +----------------------+-------------------------+
-                                   v
-                       +--------------------------+
-                       | Neon PostgreSQL          |
-                       | Application persistence |
-                       +--------------------------+
+| Vercel environment    |                       | Next.js application       |
+| Production secrets    | -------------------> | Pages and route handlers  |
++-----------------------+                       +------------+-------------+
+                                                                 |
+                         +---------------------------------------+----------------+
+                         |                                                        |
+                         v                                                        v
+              +--------------------------+                         +----------------------+
+              | Neon PostgreSQL          |                         | OpenRouter, Resend,  |
+              | Application persistence |                         | Stripe, OAuth        |
+              +--------------------------+                         +----------------------+
 ```
 
-The deployment manifest does not define environment values. Configure the variables from [Environment Variables](#14-environment-variables) in Railway separately. No Dockerfile, Vercel configuration, GitHub Actions deployment workflow, or other hosting manifest is included.
+### Vercel Environment Variables
+
+Add the variables from [Environment Variables](#14-environment-variables) in `Vercel Dashboard -> Project -> Settings -> Environment Variables`. Configure separate values for Development, Preview, and Production as needed. Do not commit `.env` or secret values.
+
+Production URL values should use the deployed domain:
+
+```env
+BETTER_AUTH_URL="https://your-domain.com"
+NEXT_PUBLIC_APP_URL="https://your-domain.com"
+BETTER_AUTH_TRUSTED_ORIGINS="https://your-domain.com"
+```
+
+Google and GitHub variables are optional Vercel environment variables. Add each provider's client ID and secret only when that social login is enabled. Register these callback URLs with the provider:
+
+```text
+https://your-domain.com/api/auth/callback/google
+https://your-domain.com/api/auth/callback/github
+```
+
+Prisma migrations must be applied with the direct Neon connection before or during deployment. Vercel does not run a repository-defined pre-deploy migration command in this project, so run the production migration separately with:
+
+```bash
+npm run db:deploy
+```
+
+The repository does not include a Dockerfile, GitHub Actions deployment workflow, or checked-in Vercel manifest.
 
 ## 18 Request Lifecycle
 

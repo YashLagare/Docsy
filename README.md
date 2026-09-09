@@ -95,15 +95,15 @@ The implemented user roles are regular authenticated workspace members and appli
 | Database | PostgreSQL on Neon |
 | ORM and driver | Prisma 7 with `@prisma/adapter-neon` and `@neondatabase/serverless` |
 | Authentication | Better Auth with Prisma persistence |
-| AI provider | Anthropic Claude through `@anthropic-ai/sdk` |
+| AI provider | OpenRouter streaming chat-completions API |
 | Email | Resend |
 | Payments | Stripe Checkout, Customer Portal, and webhooks |
 | Styling | Tailwind CSS v4, shadcn/ui, Base UI, Tailwind Merge, Tailwind Animate |
 | UI components | Lucide React, Radix-style component primitives through the configured UI stack |
-| Document processing | Mammoth for DOCX text extraction; PDF bytes are sent to Claude as PDFs |
+| Document processing | Mammoth for DOCX text extraction; PDF bytes are stored but not text-extracted for OpenRouter |
 | Markdown | `react-markdown` and `remark-gfm` |
 | Build and validation | Next.js build, TypeScript compiler, ESLint, Prettier |
-| Deployment | Railway Railpack configuration |
+| Deployment | Vercel-compatible Next.js deployment; no Vercel manifest is checked in |
 | Runtime | Node.js 22 or newer |
 | Testing | No test framework or checked-in automated test suite is configured |
 
