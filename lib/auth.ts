@@ -1,15 +1,16 @@
-import { after } from "next/server"
 import { betterAuth } from "better-auth"
+import { prismaAdapter } from "better-auth/adapters/prisma"
 import {
   APIError,
   createAuthMiddleware,
   getSessionFromCtx,
 } from "better-auth/api"
-import { prismaAdapter } from "better-auth/adapters/prisma"
 import { nextCookies } from "better-auth/next-js"
 import { admin, organization } from "better-auth/plugins"
+import { after } from "next/server"
 
 import { purgeUserData } from "@/lib/account"
+import { isAdminRole } from "@/lib/admin"
 import {
   describeDeactivated,
   describePasswordReset,
@@ -17,7 +18,6 @@ import {
   LOG_ACTIONS,
 } from "@/lib/admin-log"
 import { actorNameFor, recordAdminLog } from "@/lib/admin-log-store"
-import { isAdminRole } from "@/lib/admin"
 import { getAppSettings } from "@/lib/app-settings-store"
 import { configuredSocialProviders } from "@/lib/auth-providers"
 import { db } from "@/lib/db"
@@ -186,7 +186,7 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: false,
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60,
     sendVerificationEmail: async ({ user, url }) => {
