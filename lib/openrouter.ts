@@ -11,7 +11,7 @@ Rules:
 - When the documents do not answer the question, say so plainly.
 - Lead with the answer and keep it as concise as the question requires.
 - Use real Markdown.
-- Add a source marker such as [1] or [2] after factual claims. The number must match the document number in the user message.
+- Add a source marker such as [1:0] or [2:3] after factual claims. The first number must match the document number and the second number must match the numbered passage containing the claim.
 - Do not invent source numbers. Do not put source markers in headings.`
 
 export const OPENROUTER_BRIEF_ANALYSIS_PROMPT = `Read the attached document end to end, then brief the developer who has to build from it.

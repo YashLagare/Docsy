@@ -1,10 +1,11 @@
 import type { ChatSource } from "@/lib/chat";
 import type { DocumentPayload } from "@/lib/documents";
 import {
-    describeOpenRouterError,
-    OPENROUTER_SYSTEM_PROMPT,
-    openRouterStream,
+  describeOpenRouterError,
+  OPENROUTER_SYSTEM_PROMPT,
+  openRouterStream,
 } from "@/lib/openrouter";
+import { splitPassages } from "@/lib/search";
 
 export type AnswerEvent =
   | { type: "text"; value: string }
@@ -17,8 +18,14 @@ function buildDocumentPrompt(documents: DocumentPayload[]) {
       const content =
         document.text?.trim() ||
         "The readable text for this document is unavailable to the selected model."
+      const passages = document.text ? splitPassages(document.text) : []
+      const labeledContent = passages.length
+        ? passages
+            .map((passage, passageIndex) => `PASSAGE ${passageIndex}: ${passage}`)
+            .join("\n\n")
+        : content
 
-      return `DOCUMENT ${index + 1}: ${document.name}\nSOURCE NUMBER: [${index + 1}]\n\n${content}`
+      return `DOCUMENT ${index + 1}: ${document.name}\nSOURCE NUMBER: [${index + 1}]\n\n${labeledContent}`
     })
     .join("\n\n---\n\n")
 }
@@ -50,21 +57,31 @@ function createSources(
   answer: string,
   documents: DocumentPayload[]
 ): ChatSource[] {
-  const indexes = [...answer.matchAll(/\[(\d+)\]/g)].map((match) =>
-    Number(match[1])
-  )
+  const markers = [...answer.matchAll(/\[(\d+)(?::(\d+))?\]/g)]
+  const indexes = markers.map((match) => Number(match[1]))
   const uniqueIndexes = [...new Set(indexes)].filter(
     (index) => index >= 1 && index <= documents.length
   )
 
   return uniqueIndexes.map((index) => {
     const document = documents[index - 1]
+    const passages = document.text ? splitPassages(document.text) : []
+    const passageIndexes = markers
+      .filter((match) => Number(match[1]) === index)
+      .map((match) => (match[2] === undefined ? 0 : Number(match[2])))
+      .filter((passageIndex) => passageIndex >= 0 && passageIndex < passages.length)
+    const selectedPassages = [...new Set(passageIndexes)]
+
     return {
       index,
       documentId: document.id,
       document: document.name,
       page: null,
-      passages: [],
+      passages: selectedPassages.map((passageIndex) => ({
+        text: passages[passageIndex],
+        before: passages[passageIndex - 1] ?? null,
+        after: passages[passageIndex + 1] ?? null,
+      })),
     }
   })
 }
