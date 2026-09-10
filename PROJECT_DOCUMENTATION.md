@@ -3,7 +3,7 @@
 **Document version:** 1.0  
 **Current application version:** 0.0.1  
 **Last updated:** 2026-09-09  
-**Project type:** Multi-tenant document workspace and AI document question-answering application
+**Project type:** Multi-tenant document workspace
 
 ## Table of Contents
 
@@ -33,7 +33,9 @@
 
 ## 1 Executive Summary
 
-Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported documents, create chats, receive streamed OpenRouter answers with source markers, search workspace data, manage account settings, and view usage information.
+Long documents are time-consuming to read, and AI answers can miss context or provide claims that are difficult to verify. Docsy helps users understand selected documents faster by returning streamed, source-referenced answers that can be checked against the uploaded material.
+
+Docsy is a Next.js application for organizing source documents in workspaces and asking questions about selected documents. Users can upload supported files, create chats, receive streamed OpenRouter answers with source markers, search workspace data, manage account settings, and view usage information.
 
 The application is implemented as a modular Next.js monolith. The browser renders App Router pages and client components. Server routes enforce session, workspace, and administrator checks before calling application stores, Better Auth, Stripe, Resend, OpenRouter, or Prisma. Neon PostgreSQL stores authentication records, workspace data, uploaded document bytes, chat data, usage events, subscriptions, avatars, settings, and audit logs.
 
@@ -41,7 +43,7 @@ The application is implemented as a modular Next.js monolith. The browser render
 
 ### Objective
 
-Provide a workspace-based document library and chat experience that lets authenticated users upload supported documents and ask questions against selected sources.
+Help authenticated users understand long documents quickly while keeping answers connected to the selected source documents so important claims are easier to verify.
 
 ### Scope
 
@@ -52,7 +54,7 @@ Implemented scope includes:
 - Optional Google and GitHub OAuth.
 - Workspace onboarding and organization membership.
 - Document upload, download, listing, and deletion.
-- PDF, DOCX, TXT, and Markdown document support.
+- Upload support for PDF, DOCX, TXT, and Markdown files. The upload formats and the formats currently extracted into text for question answering are not identical: DOCX, TXT, and Markdown are extracted; PDF bytes are stored and downloadable but are not text-extracted by the current AI flow.
 - Chat creation, document attachment, streamed OpenRouter answers, source markers, and answer feedback.
 - Workspace search, usage tracking, account settings, and account deletion.
 - Administrator user, settings, plan, maintenance, retention, and audit-log operations.
@@ -80,9 +82,11 @@ The implemented user roles are regular authenticated workspace members and appli
 
 ### Real-world Use Cases
 
-- Uploading project or business documents into a workspace.
-- Asking questions about one or more uploaded sources.
-- Reviewing cited answers in a chat.
+- Reviewing research papers and academic material.
+- Summarizing business reports and proposals.
+- Asking questions about technical documentation and project documents.
+- Checking policies, procedures, and other operational documents.
+- Reviewing source-referenced answers in a chat.
 - Managing workspace billing and account settings.
 - Administrating users, plans, security switches, and retention policies.
 
@@ -100,7 +104,7 @@ The implemented user roles are regular authenticated workspace members and appli
 | Payments | Stripe Checkout, Customer Portal, and webhooks |
 | Styling | Tailwind CSS v4, shadcn/ui, Base UI, Tailwind Merge, Tailwind Animate |
 | UI components | Lucide React, Radix-style component primitives through the configured UI stack |
-| Document processing | Mammoth for DOCX text extraction; PDF bytes are stored but not text-extracted for OpenRouter |
+| Document processing | Mammoth for DOCX text extraction; TXT and Markdown are decoded as text; PDF bytes are stored but not text-extracted for the current OpenRouter flow |
 | Markdown | `react-markdown` and `remark-gfm` |
 | Build and validation | Next.js build, TypeScript compiler, ESLint, Prettier |
 | Deployment | Vercel-compatible Next.js deployment; no Vercel manifest is checked in |
@@ -110,6 +114,17 @@ The implemented user roles are regular authenticated workspace members and appli
 ## 4 System Architecture
 
 Docsy is a client-server monolith built with the Next.js App Router. Server-rendered pages and client components are deployed with the same application as the API route handlers. Prisma provides persistence through the Neon serverless PostgreSQL adapter.
+
+### Current AI Answer Flow
+
+The current answer path is:
+
+```text
+Select documents -> obtain available document content -> build model context
+-> send question to OpenRouter -> stream answer -> store answer and source metadata
+```
+
+For DOCX, TXT, and Markdown files, available text is extracted and included in the model context. PDF files can be uploaded and stored, but the current implementation does not extract PDF text for the OpenRouter request. Source markers and saved passage metadata support the source reader for answers that reference extracted text.
 
 ```text
 +-----------------------+       HTTPS        +------------------------------+
@@ -130,7 +145,7 @@ Docsy is a client-server monolith built with the Next.js App Router. Server-rend
                     v                                                   v
         +---------------------------+                       +----------------------+
         | Neon PostgreSQL            |                       | External integrations|
-        | Auth, workspaces, bytes,   |                       | Anthropic, Resend,   |
+        | Auth, workspaces, bytes,   |                       | OpenRouter, Resend,  |
         | chats, usage, billing      |                       | Stripe, OAuth        |
         +---------------------------+                       +----------------------+
 ```
@@ -210,10 +225,10 @@ Generated Prisma output is under `generated/prisma/` and is not manually edited.
 ### Document Question Answering
 
 - **Purpose:** Ask questions over selected ready documents and receive streamed answers with sources.
-- **Business value:** Converts stored documents into an interactive question-answering workflow.
-- **Main components:** Chat pages, chat composer, conversation, answer markdown, source reader, `lib/anthropic.ts`, and answer stores.
+- **Business value:** Helps users understand long documents faster while providing source references that make important answers easier to verify.
+- **Main components:** Chat pages, chat composer, conversation, answer markdown, source reader, `lib/openrouter.ts`, and answer stores.
 - **Related APIs:** `/api/chats`, `/api/chats/[chatId]/messages`, and chat document routes.
-- **Dependencies:** Anthropic Claude, PostgreSQL, `react-markdown`, and `remark-gfm`.
+- **Dependencies:** OpenRouter, PostgreSQL, `react-markdown`, and `remark-gfm`.
 
 ### Search and Usage
 
@@ -462,7 +477,7 @@ Workspace routes require a valid session and active workspace. Missing sessions 
 | `PATCH` | `/api/chats/[chatId]/messages/[messageId]` | Workspace | JSON `feedback`: `UP`, `DOWN`, or `null` | Updated feedback |
 | `GET` | `/api/search` | Workspace | None | Workspace chats and documents for search |
 
-Document upload returns `400` for missing or empty files, `413` for oversized files, `415` for unsupported formats, and `422` for extraction failure. Chat answer requests return `503` when Anthropic is unavailable, `404` when the chat is missing, `402` when usage allowance is exhausted, `409` when no answer or document scope is available, and `400` for invalid scope.
+Document upload returns `400` for missing or empty files, `413` for oversized files, `415` for unsupported formats, and `422` for extraction failure. Chat answer requests return `503` when OpenRouter is unavailable, `404` when the chat is missing, `402` when usage allowance is exhausted, `409` when no answer or document scope is available, and `400` for invalid scope.
 
 ### Billing APIs
 
@@ -520,7 +535,8 @@ The following variables are referenced by application or Prisma configuration. E
 | `GOOGLE_CLIENT_SECRET` | Optional pair | Google OAuth client secret |
 | `GITHUB_CLIENT_ID` | Optional pair | GitHub OAuth client identifier |
 | `GITHUB_CLIENT_SECRET` | Optional pair | GitHub OAuth client secret |
-| `ANTHROPIC_API_KEY` | Required for chat answers | Claude API access |
+| `OPENROUTER_API_KEY` | Required for chat answers | OpenRouter API access |
+| `OPENROUTER_MODEL` | Optional | OpenRouter model identifier; defaults to `openrouter/free` |
 | `STRIPE_SECRET_KEY` | Required for billing | Stripe API access |
 | `STRIPE_WEBHOOK_SECRET` | Required for Stripe webhooks | Stripe signature verification |
 | `STRIPE_PRICE_PRO_MONTHLY` | Optional | Pro monthly recurring price ID |
@@ -541,7 +557,7 @@ The following variables are referenced by application or Prisma configuration. E
 | `better-auth` | Authentication and organization/session workflows |
 | `@prisma/client`, `prisma` | Database client, schema, migrations, and Studio |
 | `@neondatabase/serverless`, `@prisma/adapter-neon` | Neon PostgreSQL connectivity |
-| `@anthropic-ai/sdk` | Claude API calls for streamed document answers |
+| `openrouter` HTTP integration | OpenRouter streaming chat-completions API for document answers |
 | `resend` | Transactional email transport |
 | `stripe` | Billing, Checkout, Customer Portal, and webhook integration |
 | `mammoth` | DOCX text extraction |
@@ -559,7 +575,7 @@ The following variables are referenced by application or Prisma configuration. E
 - npm.
 - A Neon PostgreSQL database.
 - A local copy of this repository.
-- Optional credentials for Resend, Anthropic, Stripe, Google, and GitHub depending on enabled features.
+- Optional credentials for Resend, OpenRouter, Stripe, Google, and GitHub depending on enabled features.
 
 ### Install and Configure
 
@@ -710,7 +726,7 @@ A typical workspace document request follows the route, session, organization, s
                               v                                         v
                  +-------------------------+                 +----------------------+
                  | Prisma Neon adapter    |                 | External provider    |
-                 | PostgreSQL persistence  |                 | Claude, Stripe,      |
+                 | PostgreSQL persistence  |                 | OpenRouter, Stripe,  |
                  +------------+------------+                 | Resend, or OAuth     |
                               |                              +----------+-----------+
                               +------------------------+----------------+
@@ -738,21 +754,24 @@ For a chat answer, the domain layer also records usage and assistant content whi
 ### Potential Bottlenecks
 
 - Document and avatar bytes are stored in PostgreSQL, increasing database storage and transfer requirements.
-- Chat answer latency depends on Anthropic response time and document payload size.
+- Chat answer latency depends on OpenRouter response time and document payload size.
 - Search currently returns workspace chat and document data without a separate search index.
 - DOCX extraction and PDF handling occur within application request processing.
 - No background processing queue is configured for document extraction.
 
 ### Scalability Considerations
 
-The current design is a single Next.js service with Neon PostgreSQL. Larger document volumes or higher concurrent upload and chat workloads would require measurement of database storage, connection behavior, request duration, Anthropic limits, and server memory before scaling decisions are made.
+The current design is a single Next.js service with Neon PostgreSQL. Larger document volumes or higher concurrent upload and chat workloads would require measurement of database storage, connection behavior, request duration, OpenRouter limits, and server memory before scaling decisions are made.
 
 ### Future Optimizations
 
 - Move large document and avatar payloads to an object-storage service.
-- Introduce asynchronous document processing for extraction and status transitions.
-- Add a purpose-built search or retrieval index if workspace search requirements grow.
-- Add load, integration, and end-to-end tests around streaming and billing flows.
+- Introduce asynchronous or background document processing for extraction and status transitions.
+- Introduce document chunking, embeddings, retrieval indexing, and citation mapping for more scalable question answering over large documents.
+- Add stronger search and retrieval capabilities as workspace data volume grows.
+- Add automated unit, integration, authorization, webhook, and end-to-end tests.
+- Implement the currently unbuilt 2FA sign-in flow and connect it to the existing security setting.
+- Add production observability, alerting, and operational health checks.
 
 ## 20 Security Review
 
@@ -797,12 +816,13 @@ The current design is a single Next.js service with Neon PostgreSQL. Larger docu
 
 ## 22 Future Improvements
 
-- Implement two-factor authentication and connect it to the existing security setting.
-- Add automated unit, integration, authorization, webhook, and end-to-end coverage.
-- Move binary document and avatar storage out of PostgreSQL when scale requires it.
-- Add asynchronous extraction and retry handling for large or complex documents.
-- Add stronger search and retrieval capabilities if workspace data volume increases.
-- Add operational observability, alerting, database backup documentation, and deployment health checks.
+- **Not implemented yet:** Implement two-factor authentication and connect it to the existing security setting.
+- **Not implemented yet:** Add automated unit, integration, authorization, webhook, and end-to-end coverage.
+- **Not implemented yet:** Move binary document and avatar storage out of PostgreSQL when scale requires it.
+- **Not implemented yet:** Add asynchronous extraction and retry handling for large or complex documents.
+- **Not implemented yet:** Introduce document chunking, embeddings, retrieval indexing, and citation mapping for more scalable question answering over large documents.
+- **Not implemented yet:** Add stronger search and retrieval capabilities if workspace data volume increases.
+- **Not implemented yet:** Add operational observability, alerting, database backup documentation, and deployment health checks.
 - Reconcile README terminology with `.env.example` by documenting `DATABASE_URL_UNPOOLED` as the preferred migration variable and `DIRECT_URL` as its fallback alias.
 
 ## 23 Developer Notes

@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
-import "./globals.css"
+import { ThemeProvider } from "@/components/theme/theme-provider"
+import { Toaster } from "@/components/ui/toast"
 import { siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
-import { Toaster } from "@/components/ui/toast"
-import { ThemeProvider } from "@/components/theme/theme-provider"
+import "./globals.css"
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     default: `${siteConfig.name} — Documentation your team actually reads`,
     template: `%s · ${siteConfig.name}`,
   },
+  category: "Multi-tenant document workspace",
   description: siteConfig.description,
 }
 
