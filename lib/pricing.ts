@@ -42,7 +42,7 @@ export const PLANS: Plan[] = [
     id: "pro",
     name: "Pro",
     description: "For professionals living in documents.",
-    price: { monthly: 19, annual: 15 },
+    price: { monthly: 29, annual: 15 },
     cta: { label: "Try Docsy free" },
     ctaVariant: "default",
     highlighted: true,
