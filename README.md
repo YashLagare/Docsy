@@ -2,7 +2,7 @@
 
 **Document version:** 1.0  
 **Current application version:** 0.0.1  
-**Last updated:** 2026-09-09  
+**Last updated:** 2026-09-12
 **Project type:** Multi-tenant document workspace
 
 ## Table of Contents
@@ -103,7 +103,7 @@ The implemented user roles are regular authenticated workspace members and appli
 | Email | Resend |
 | Payments | Stripe Checkout, Customer Portal, and webhooks |
 | Styling | Tailwind CSS v4, shadcn/ui, Base UI, Tailwind Merge, Tailwind Animate |
-| UI components | Lucide React, Radix-style component primitives through the configured UI stack |
+| UI components | Lucide React for interface icons, React Icons for brand icons, and Radix-style component primitives through the configured UI stack |
 | Document processing | Mammoth for DOCX text extraction; TXT and Markdown are decoded as text; PDF bytes are stored but not text-extracted for the current OpenRouter flow |
 | Markdown | `react-markdown` and `remark-gfm` |
 | Build and validation | Next.js build, TypeScript compiler, ESLint, Prettier |
@@ -565,6 +565,7 @@ The following variables are referenced by application or Prisma configuration. E
 | `tailwindcss`, `tw-animate-css` | Styling and animation utilities |
 | `shadcn`, `@shadcn/react`, `@base-ui/react` | UI component system and primitives |
 | `lucide-react` | Interface icons |
+| `react-icons` | Brand and social icons |
 | `recharts` | Usage and dashboard chart rendering |
 
 ## 16 Installation Guide
