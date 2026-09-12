@@ -29,16 +29,13 @@ export const footerNav: NavGroup[] = [
     items: [
       { href: "/#product", label: "Features" },
       { href: "/#pricing", label: "Pricing" },
-      { href: "/#security", label: "Security" },
-      { href: "/changelog", label: "Changelog" },
+      { href: "/security", label: "Security" },
     ],
   },
   {
     title: "Company",
     items: [
       { href: "/about", label: "About" },
-      { href: "/blog", label: "Blog" },
-      { href: "/careers", label: "Careers" },
       { href: "/contact", label: "Contact" },
     ],
   },
@@ -46,9 +43,6 @@ export const footerNav: NavGroup[] = [
     title: "Resources",
     items: [
       { href: "/docs", label: "Docs" },
-      { href: "/docs/api", label: "API" },
-      { href: "/integrations", label: "Integrations" },
-      { href: "/status", label: "Status" },
     ],
   },
   {
@@ -56,8 +50,7 @@ export const footerNav: NavGroup[] = [
     items: [
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
-      { href: "/dpa", label: "DPA" },
-      { href: "/soc-2", label: "SOC 2" },
+      { href: "/refund-policy", label: "Refund Policy" },
     ],
   },
 ]

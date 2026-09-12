@@ -1,8 +1,8 @@
 import Link from "next/link"
 
-import { footerNav, siteConfig } from "@/lib/site-config"
-import { Separator } from "@/components/ui/separator"
 import { DocsyLogo } from "@/components/brand/docsy-logo"
+import { Separator } from "@/components/ui/separator"
+import { footerNav, siteConfig } from "@/lib/site-config"
 
 function SiteFooter() {
   return (
@@ -14,7 +14,7 @@ function SiteFooter() {
               <DocsyLogo size="sm" />
             </Link>
             <p className="max-w-72 text-sm leading-relaxed text-muted-foreground">
-              Chat with your documents — with a citation for every answer.
+              A document workspace for understanding long documents and reviewing source references.
             </p>
           </div>
 
@@ -45,11 +45,10 @@ function SiteFooter() {
 
         <div className="flex flex-col gap-2 py-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {siteConfig.name}, Inc. All rights
-            reserved.
+            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <p className="font-mono text-xs text-muted-foreground">
-            Built for people who have to be right.
+            Built for focused document work.
           </p>
         </div>
       </div>
