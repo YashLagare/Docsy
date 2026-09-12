@@ -1,11 +1,10 @@
 import Link from "next/link"
 
-import { mainNav } from "@/lib/site-config"
 import { AuthHeaderActions } from "@/components/auth/auth-header-actions"
 import { DocsyLogo } from "@/components/brand/docsy-logo"
 import { MobileNav } from "@/components/layout/mobile-nav"
-import { SearchDocsButton } from "@/components/search/search-docs-button"
 import { ModeToggle } from "@/components/theme/mode-toggle"
+import { mainNav } from "@/lib/site-config"
 
 function SiteHeader() {
   return (
@@ -28,7 +27,6 @@ function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <SearchDocsButton className="hidden lg:inline-flex" />
           <ModeToggle />
           <AuthHeaderActions />
           <MobileNav items={mainNav} className="md:hidden" />
