@@ -1,56 +1,56 @@
 import {
-  BookOpenIcon,
-  CommandIcon,
-  FileIcon,
-  LayersIcon,
-  MessageSquareIcon,
-  Share2Icon,
+    BookOpenIcon,
+    CommandIcon,
+    FileIcon,
+    LayersIcon,
+    MessageSquareIcon,
+    Share2Icon,
 } from "lucide-react"
 
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { SectionHeading } from "@/components/marketing/section-heading"
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 const FEATURES = [
   {
     icon: MessageSquareIcon,
-    title: "Chat with citations",
+    title: "Document workspace",
     description:
-      "Streaming answers where every claim links to the exact line it's based on. If the source isn't there, Docsy says so.",
+      "Keep documents, chats, and workspace activity together in one place.",
   },
   {
     icon: BookOpenIcon,
-    title: "Side-by-side source reader",
+    title: "Answers from selected sources",
     description:
-      "The passage behind each answer highlighted next to your chat — read it in context without leaving the conversation.",
+      "Attach relevant documents to a chat and ask questions about their content.",
   },
   {
     icon: LayersIcon,
-    title: "Multi-document search",
+    title: "Source references",
     description:
-      "Ask across your whole library at once. Docsy retrieves from the right files by meaning, not just keywords.",
+      "Follow source markers, review available passages, and open the supporting document.",
   },
   {
     icon: FileIcon,
-    title: "40+ formats & OCR",
+    title: "Supported uploads",
     description:
-      "PDFs, Word, slides, spreadsheets, plain text — even scanned documents, read automatically with built-in OCR.",
+      "Upload PDF, DOCX, TXT, and Markdown files. Text is extracted from DOCX, TXT, and Markdown for the current answer flow.",
   },
   {
     icon: CommandIcon,
-    title: "⌘K command palette",
+    title: "Workspace search",
     description:
-      "Search, ask, or jump anywhere from the keyboard. Chat history, shortcuts, and a workflow built for power users.",
+      "Find chats and documents across your workspace from one search experience.",
   },
   {
     icon: Share2Icon,
-    title: "Export & integrate",
+    title: "Usage and billing",
     description:
-      "Export any conversation to Markdown or a shareable link. Connect Google Drive and Notion to keep sources in sync.",
+      "Track question usage and manage workspace plans from your account settings.",
   },
 ]
 
@@ -61,7 +61,7 @@ function EverythingInOneWorkspace() {
         <SectionHeading
           className="max-w-160"
           eyebrow="Everything in one workspace"
-          title="Built for people who have to be right — and prove it."
+          title="The tools for understanding documents faster."
         />
 
         {/* Below `md` the cards become a swipeable rail: each card is 82% of

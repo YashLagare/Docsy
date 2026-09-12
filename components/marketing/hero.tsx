@@ -1,11 +1,11 @@
-import Link from "next/link"
 import { ArrowRightIcon, CheckIcon, PlayIcon } from "lucide-react"
+import Link from "next/link"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { AuthDialogTrigger } from "@/components/auth/auth-dialog-trigger"
 import { HeroPreview } from "@/components/marketing/hero-preview"
 import { TrustedBy } from "@/components/marketing/trusted-by"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 const PROOF_POINTS = ["Free for 5 documents", "No card required"]
 
@@ -23,24 +23,24 @@ function Hero() {
             className="h-7 gap-2 px-3 text-sm font-normal text-muted-foreground"
           >
             <span aria-hidden className="size-1.5 rounded-full bg-brand" />
-            Grounded answers — a citation for every claim
+            Answers based on selected documents
           </Badge>
 
           <h1 className="text-4xl leading-[1.05] font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="block">Chat with your documents.</span>
+            <span className="block">Get answers from long documents.</span>
             <span className="relative inline-block">
               <span
                 aria-hidden
                 className="absolute inset-x-0 bottom-[0.06em] h-[0.24em] bg-brand/25"
               />
-              <span className="relative">Verify every word.</span>
+              <span className="relative">See where they came from.</span>
             </span>
           </h1>
 
           <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Docsy reads your PDFs, contracts, and reports, then answers in plain
-            language — with a link to the exact passage behind every claim. No
-            more Ctrl-F. No skimming. No hallucinations.
+            Upload supported documents, choose the sources you need, and ask
+            questions in plain language. Review source references to check the
+            answer against your documents.
           </p>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

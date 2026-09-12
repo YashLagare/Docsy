@@ -6,7 +6,7 @@ export type NavItem = {
 export const siteConfig = {
   name: "Docsy",
   description:
-    "Docsy turns scattered docs into a single searchable workspace your team can trust.",
+    "Docsy is a document workspace for understanding long documents and reviewing source references.",
 }
 
 export type NavGroup = {

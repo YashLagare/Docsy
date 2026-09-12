@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { AuthDialogTrigger } from "@/components/auth/auth-dialog-trigger"
+import { Button } from "@/components/ui/button"
 
 function FooterCta() {
   return (
@@ -15,13 +15,12 @@ function FooterCta() {
 
         <div className="relative flex flex-col items-center gap-6 px-6 py-20 text-center">
           <h2 className="text-4xl leading-[1.05] font-bold tracking-tight sm:text-5xl">
-            <span className="block">Stop skimming.</span>
-            <span className="block">Start asking.</span>
+            <span className="block">Understand long documents faster.</span>
           </h2>
 
           <p className="max-w-md text-lg leading-relaxed text-muted-foreground">
-            Upload your first documents and get cited answers in minutes. Free
-            for 5 files — no card required.
+            Upload supported documents, ask about selected sources, and review
+            the references behind the answer. Free for 5 documents.
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -33,7 +32,7 @@ function FooterCta() {
               <ArrowRightIcon data-icon="inline-end" />
             </AuthDialogTrigger>
             <Button variant="outline" className="h-11 px-5 text-base">
-              Try the ⌘K search
+              See how it works
             </Button>
           </div>
         </div>

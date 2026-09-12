@@ -1,29 +1,29 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { SectionHeading } from "@/components/marketing/section-heading"
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 const STEPS = [
   {
     number: "01",
-    title: "Upload & index",
+    title: "Upload documents",
     description:
-      "Drop in files or whole folders — 40+ formats. Scans are OCR'd automatically and embedded into your private, searchable vector store.",
+      "Add PDF, DOCX, TXT, or Markdown files to your workspace.",
   },
   {
     number: "02",
     title: "Ask in plain language",
     description:
-      "Ask across one document or your entire library. Docsy streams back an answer and pulls from exactly the right files.",
+      "Choose the documents for a chat and ask questions in plain language. Get answers based on those selected sources.",
   },
   {
     number: "03",
-    title: "Verify in one click",
+    title: "Review the sources",
     description:
-      "Every claim carries a citation. Open the source reader to see the exact highlighted passage and page it came from.",
+      "Use source markers to review available supporting passages and open the original document.",
   },
 ]
 
@@ -36,7 +36,7 @@ function HowItWorks() {
       <SectionHeading
         className="max-w-160"
         eyebrow="How it works"
-        title="From a folder of files to a trusted answer in three steps."
+        title="From documents to an answer you can review."
       />
 
       <div className="mt-14 grid gap-6 md:grid-cols-3">

@@ -1,38 +1,38 @@
 import { PlusIcon } from "lucide-react"
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { SectionHeading } from "@/components/marketing/section-heading"
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const FAQS = [
   {
-    question: "How does Docsy make sure answers are accurate?",
+    question: "How are answers connected to my documents?",
     answer:
-      "Every claim in an answer links to the passage it came from. Open the source reader to see the exact highlighted text and the page it sits on. When your documents don't support an answer, Docsy says so instead of guessing.",
+      "Answers are based on the documents selected for the chat. Source markers let you review available supporting passages and open the original document.",
   },
   {
     question: "What file types can I upload?",
     answer:
-      "Over 40 formats, including PDFs, Word documents, slides, spreadsheets, and plain text. Scanned files are run through OCR automatically, so image-only PDFs become searchable too.",
+      "You can upload PDF, DOCX, TXT, and Markdown files. DOCX, TXT, and Markdown are extracted into text for the current answer flow; PDF files are stored and downloadable.",
   },
   {
-    question: "Is my data private?",
+    question: "How is workspace data organized?",
     answer:
-      "Your documents are encrypted in transit and at rest in an isolated, per-workspace vector store. They are never used to train models, and deleting a document removes its embeddings with it.",
+      "Documents, chats, usage, and search results are scoped to your workspace. Authentication and server-side authorization protect workspace routes.",
   },
   {
-    question: "Can Docsy search across many documents at once?",
+    question: "Can I ask about more than one document?",
     answer:
-      "Yes. Ask a question against a single file or your entire library, and Docsy retrieves from the right documents by meaning rather than keyword matching alone.",
+      "Yes. Attach one or more ready documents to a chat and ask questions against the selected sources.",
   },
   {
-    question: "Does it integrate with my existing tools?",
+    question: "Can I review the source document?",
     answer:
-      "Pro and Business connect to Google Drive and Notion to keep sources in sync. Any conversation can be exported to Markdown or shared as a link.",
+      "Yes. Source references can open available passages in the source reader, and the original uploaded document can be opened separately.",
   },
   {
     question: "What's the difference between plans?",

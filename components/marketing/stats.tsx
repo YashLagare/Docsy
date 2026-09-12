@@ -1,8 +1,8 @@
 const STATS = [
-  { value: "100%", label: "of answers carry a citation" },
-  { value: "40+", label: "file formats supported" },
-  { value: "<1.2s", label: "to first streamed token" },
-  { value: "12M+", label: "pages indexed for customers" },
+  { value: "4", label: "supported upload formats" },
+  { value: "20", label: "documents per chat" },
+  { value: "5", label: "free documents" },
+  { value: "50", label: "Pro questions per month" },
 ]
 
 function Stats() {
