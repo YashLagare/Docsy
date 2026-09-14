@@ -262,24 +262,38 @@ The following placeholders correspond to implemented page routes. Replace each p
 | --- | --- |
 | Marketing home `/` | `<img width="1897" height="910" alt="Docsy" src="https://github.com/user-attachments/assets/55708dad-3def-4efc-96a2-62675795d96f" />
 ` |
-| Password reset `/reset-password` | `[INSERT_RESET_PASSWORD_PAGE_SCREENSHOT]` |
-| Dashboard `/app` | `[INSERT_DASHBOARD_SCREENSHOT]` |
-| Onboarding `/app/onboarding` | `[INSERT_ONBOARDING_SCREENSHOT]` |
-| Chats `/app/chats` | `[INSERT_CHATS_PAGE_SCREENSHOT]` |
-| Chat detail `/app/chats/[chatId]` | `[INSERT_CHAT_DETAIL_SCREENSHOT]` |
-| Library `/app/library` | `[INSERT_LIBRARY_PAGE_SCREENSHOT]` |
-| Search `/app/search` | `[INSERT_SEARCH_PAGE_SCREENSHOT]` |
-| Usage `/app/usage` | `[INSERT_USAGE_PAGE_SCREENSHOT]` |
-| Settings `/app/settings` | `[INSERT_SETTINGS_PAGE_SCREENSHOT]` |
-| Billing `/app/settings/billing` | `[INSERT_BILLING_PAGE_SCREENSHOT]` |
-| Danger zone `/app/settings/danger-zone` | `[INSERT_DANGER_ZONE_SCREENSHOT]` |
-| Admin overview `/app/admin` | `[INSERT_ADMIN_OVERVIEW_SCREENSHOT]` |
-| Admin users `/app/admin/users` | `[INSERT_ADMIN_USERS_SCREENSHOT]` |
-| New admin user `/app/admin/users/new` | `[INSERT_ADMIN_NEW_USER_SCREENSHOT]` |
-| Admin security `/app/admin/security` | `[INSERT_ADMIN_SECURITY_SCREENSHOT]` |
-| Admin logs `/app/admin/logs` | `[INSERT_ADMIN_LOGS_SCREENSHOT]` |
-
-Reference images are stored under `ui-design/landing/` and `ui-design/dashboard/` in light and dark variants. The repository does not contain production screenshots embedded in this documentation file.
+| Password reset `/reset-password` | `<img width="1917" height="903" alt="image" src="https://github.com/user-attachments/assets/a67cb39b-a074-461c-a371-a5e3b7fceae3" />
+` |
+| Dashboard `/app` | `<img width="1842" height="955" alt="image" src="https://github.com/user-attachments/assets/15c48451-132b-4809-8528-7e26e48fd860" />
+` |
+| Onboarding `/app/onboarding` | `<img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/df1d9773-25dc-4ce3-9a36-eacf9bbd31bc" />
+` |
+| Chats `/app/chats` | `<img width="1842" height="960" alt="image" src="https://github.com/user-attachments/assets/205ff5a1-72ea-4b9b-a77a-e3d967257f7e" />
+` |
+| Chat detail `/app/chats/[chatId]` | `<img width="1846" height="957" alt="image" src="https://github.com/user-attachments/assets/2b4f499a-c838-459f-92f3-6874bc6a3b48" />
+` |
+| Library `/app/library` | `<img width="1847" height="952" alt="image" src="https://github.com/user-attachments/assets/9213e356-6036-429e-8420-133e82aeb9f1" />
+` |
+| Search `/app/search` | `<img width="1847" height="958" alt="image" src="https://github.com/user-attachments/assets/64d439b1-db5b-4df0-b641-21d1d25e8cd8" />
+` |
+| Usage `/app/usage` | `<img width="1836" height="953" alt="image" src="https://github.com/user-attachments/assets/d6e1cc49-8660-44fd-b763-a5ede9e6813c" />
+` |
+| Settings `/app/settings` | `<img width="1831" height="962" alt="image" src="https://github.com/user-attachments/assets/ea7c2e4e-19a3-46f3-9f2d-e9a55948794d" />
+` |
+| Billing `/app/settings/billing` | `<img width="1832" height="958" alt="image" src="https://github.com/user-attachments/assets/8ae536fe-5fbc-49ef-a085-829ba2b5b82e" />
+` |
+| Danger zone `/app/settings/danger-zone` | `<img width="1846" height="962" alt="image" src="https://github.com/user-attachments/assets/26a1421b-896d-4459-9572-91648bb7bff3" />
+` |
+| Admin overview `/app/admin` | `<img width="1846" height="958" alt="image" src="https://github.com/user-attachments/assets/12e8b5c7-9d4f-4438-a5c1-271ac1dddae3" />
+` |
+| Admin users `/app/admin/users` | `<img width="1847" height="957" alt="image" src="https://github.com/user-attachments/assets/1be3ba42-276f-476b-b438-7f63013086db" />
+` |
+| New admin user `/app/admin/users/new` | `<img width="1835" height="956" alt="image" src="https://github.com/user-attachments/assets/3efb5ecd-f5ea-4c10-aeee-394f26e2174b" />
+` |
+| Admin security `/app/admin/security` | `<img width="1236" height="856" alt="image" src="https://github.com/user-attachments/assets/ef4dfa7e-18bb-493a-b4cf-0af8554631a2" />
+` |
+| Admin logs `/app/admin/logs` | `<img width="1512" height="861" alt="image" src="https://github.com/user-attachments/assets/d5b0251d-2d96-4002-914b-0fdeb184ce76" />
+` |
 
 ## 8 Database Design
 
