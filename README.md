@@ -260,7 +260,8 @@ The following placeholders correspond to implemented page routes. Replace each p
 
 | Page | Placeholder |
 | --- | --- |
-| Marketing home `/` | `[INSERT_HOME_PAGE_SCREENSHOT]` |
+| Marketing home `/` | `<img width="1897" height="910" alt="Docsy" src="https://github.com/user-attachments/assets/55708dad-3def-4efc-96a2-62675795d96f" />
+` |
 | Password reset `/reset-password` | `[INSERT_RESET_PASSWORD_PAGE_SCREENSHOT]` |
 | Dashboard `/app` | `[INSERT_DASHBOARD_SCREENSHOT]` |
 | Onboarding `/app/onboarding` | `[INSERT_ONBOARDING_SCREENSHOT]` |
