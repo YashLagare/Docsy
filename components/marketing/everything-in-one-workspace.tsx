@@ -1,18 +1,18 @@
 import {
-    BookOpenIcon,
-    CommandIcon,
-    FileIcon,
-    LayersIcon,
-    MessageSquareIcon,
-    Share2Icon,
+  BookOpenIcon,
+  CommandIcon,
+  FileIcon,
+  LayersIcon,
+  MessageSquareIcon,
+  Share2Icon,
 } from "lucide-react"
 
 import { SectionHeading } from "@/components/marketing/section-heading"
 import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card"
 
 const FEATURES = [
