@@ -2,10 +2,10 @@ import { PlusIcon } from "lucide-react"
 
 import { SectionHeading } from "@/components/marketing/section-heading"
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion"
 
 const FAQS = [
