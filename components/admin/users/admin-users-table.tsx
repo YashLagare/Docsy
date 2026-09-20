@@ -1,14 +1,6 @@
-import {
-  adminUsersHref,
-  ADMIN_USERS_PAGE_SIZE,
-  lastActiveLabel,
-  type AdminUserStatus,
-} from "@/lib/admin"
-import { getAdminUsers } from "@/lib/admin-store"
-import { planName } from "@/lib/billing"
-import { rangeLabel } from "@/lib/pagination"
-import { requireAdmin } from "@/lib/session"
-import { cn } from "@/lib/utils"
+import { AdminUserRowActions } from "@/components/admin/users/admin-user-row-actions"
+import { UserAvatar } from "@/components/auth/user-avatar"
+import { Pager } from "@/components/dashboard/pager"
 import { Badge } from "@/components/ui/badge"
 import {
   Table,
@@ -18,9 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { UserAvatar } from "@/components/auth/user-avatar"
-import { Pager } from "@/components/dashboard/pager"
-import { AdminUserRowActions } from "@/components/admin/users/admin-user-row-actions"
+import {
+  ADMIN_USERS_PAGE_SIZE,
+  adminUsersHref,
+  lastActiveLabel,
+  type AdminUserStatus,
+} from "@/lib/admin"
+import { getAdminUsers } from "@/lib/admin-store"
+import { planName } from "@/lib/billing"
+import { rangeLabel } from "@/lib/pagination"
+import { requireAdmin } from "@/lib/session"
+import { cn } from "@/lib/utils"
 
 const headCell =
   "h-11 px-6 text-[0.6875rem] font-bold tracking-[0.08em] text-muted-foreground uppercase"
@@ -150,7 +150,7 @@ async function AdminUsersTable({
                         "rounded-md font-mono text-[0.6875rem] font-bold",
                         user.planId === "business" && "bg-brand/15 text-brand",
                         user.planId === "pro" &&
-                          "border border-border bg-background text-foreground"
+                        "border border-border bg-background text-foreground"
                       )}
                     >
                       {planName(user.planId)}

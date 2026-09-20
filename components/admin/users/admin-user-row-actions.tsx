@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
 import {
   ArrowUpIcon,
   CircleAlertIcon,
@@ -9,10 +7,9 @@ import {
   MoreVerticalIcon,
   RotateCcwIcon,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import * as React from "react"
 
-import type { AdminUserRow } from "@/lib/admin"
-import { authClient } from "@/lib/auth-client"
-import { nextPlanUp, planName } from "@/lib/billing"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +30,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
+import type { AdminUserRow } from "@/lib/admin"
+import { authClient } from "@/lib/auth-client"
+import { nextPlanUp, planName } from "@/lib/billing"
 
 /**
  * The overflow menu at the end of a user row —
@@ -102,9 +102,9 @@ function AdminUserRowActions({ user }: { user: AdminUserRow }) {
       const { error } = isDeactivated
         ? await authClient.admin.unbanUser({ userId: user.id })
         : await authClient.admin.banUser({
-            userId: user.id,
-            banReason: "Deactivated from the admin console",
-          })
+          userId: user.id,
+          banReason: "Deactivated from the admin console",
+        })
 
       if (error) {
         toast.add({
