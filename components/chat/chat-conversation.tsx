@@ -1,18 +1,20 @@
 "use client"
 
-import * as React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { PaperclipIcon } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import * as React from "react"
 
+import { DocsyMark } from "@/components/brand/docsy-logo"
+import { AnswerActions } from "@/components/chat/answer-actions"
+import { AnswerMarkdown } from "@/components/chat/answer-markdown"
+import { AttachDocumentsDialog } from "@/components/chat/attach-documents-dialog"
+import { ChatComposer } from "@/components/chat/chat-composer"
+import { DocumentScope } from "@/components/chat/document-scope"
 import {
-  allowanceSpentMessage,
-  chatRoute,
-  formatQuestionCount,
-  type ChatDetail,
-  type ChatMessageView,
-  type ChatSource,
-} from "@/lib/chat"
-import { cn } from "@/lib/utils"
+  SourceReader,
+  type ActiveCitation,
+} from "@/components/chat/source-reader"
+import { TypingDots } from "@/components/common/typing-dots"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { InputGroupButton } from "@/components/ui/input-group"
@@ -31,17 +33,15 @@ import {
   MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
 import { Separator } from "@/components/ui/separator"
-import { DocsyMark } from "@/components/brand/docsy-logo"
-import { TypingDots } from "@/components/common/typing-dots"
-import { AnswerActions } from "@/components/chat/answer-actions"
-import { AttachDocumentsDialog } from "@/components/chat/attach-documents-dialog"
-import { DocumentScope } from "@/components/chat/document-scope"
 import {
-  SourceReader,
-  type ActiveCitation,
-} from "@/components/chat/source-reader"
-import { AnswerMarkdown } from "@/components/chat/answer-markdown"
-import { ChatComposer } from "@/components/chat/chat-composer"
+  allowanceSpentMessage,
+  chatRoute,
+  formatQuestionCount,
+  type ChatDetail,
+  type ChatMessageView,
+  type ChatSource,
+} from "@/lib/chat"
+import { cn } from "@/lib/utils"
 
 function AnswerBody({
   content,
@@ -209,15 +209,15 @@ function ChatConversation({ chat }: { chat: ChatDetail }) {
   const [messages, setMessages] = React.useState<ChatMessageView[]>(() =>
     carried.autoAsk
       ? [
-          ...chat.messages,
-          {
-            id: "carried-question",
-            role: "user",
-            content: carried.question,
-            sources: [],
-            feedback: null,
-          },
-        ]
+        ...chat.messages,
+        {
+          id: "carried-question",
+          role: "user",
+          content: carried.question,
+          sources: [],
+          feedback: null,
+        },
+      ]
       : chat.messages
   )
   const [streamed, setStreamed] = React.useState("")
