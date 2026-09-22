@@ -1,9 +1,9 @@
 import { SectionHeading } from "@/components/marketing/section-heading"
 import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card"
 
 const STEPS = [
