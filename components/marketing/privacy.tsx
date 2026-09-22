@@ -1,9 +1,9 @@
 import {
-    ArrowRightIcon,
-    CheckIcon,
-    LockIcon,
-    ShieldIcon,
-    Trash2Icon,
+  ArrowRightIcon,
+  CheckIcon,
+  LockIcon,
+  ShieldIcon,
+  Trash2Icon,
 } from "lucide-react"
 import Link from "next/link"
 import { Fragment } from "react"
