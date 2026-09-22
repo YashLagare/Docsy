@@ -25,7 +25,10 @@ const original = await readFile(SCHEMA_PATH, "utf8")
 let schema = original
 
 // 1. Drop the datasource url — prisma.config.ts owns it.
-schema = schema.replace(/^[ \t]*url\s*=\s*env\("DATABASE_URL"\)[ \t]*\r?\n/m, "")
+schema = schema.replace(
+  /^[ \t]*url\s*=\s*env\("DATABASE_URL"\)[ \t]*\r?\n/m,
+  ""
+)
 
 // 2. Restore the generator output path.
 if (!/^[ \t]*output\s*=/m.test(schema)) {
