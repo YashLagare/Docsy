@@ -27,8 +27,8 @@ function warnIfSandboxSender() {
   sandboxWarningLogged = true
   console.warn(
     `[email] EMAIL_FROM is "${EMAIL_FROM}", Resend's sandbox sender — it can only ` +
-      `deliver to your own Resend account address. Set EMAIL_FROM to an address on ` +
-      `a domain you've verified at https://resend.com/domains to reach real users.`
+    `deliver to your own Resend account address. Set EMAIL_FROM to an address on ` +
+    `a domain you've verified at https://resend.com/domains to reach real users.`
   )
 }
 
@@ -62,9 +62,9 @@ async function send({ to, content, idempotencyKey }: SendArgs) {
   if (!resend) {
     console.warn(
       `[email] RESEND_API_KEY is not set — logging instead of sending.\n` +
-        `  to:      ${to}\n` +
-        `  subject: ${content.subject}\n` +
-        `  ${content.text.split("\n").join("\n  ")}`
+      `  to:      ${to}\n` +
+      `  subject: ${content.subject}\n` +
+      `  ${content.text.split("\n").join("\n  ")}`
     )
     return
   }
