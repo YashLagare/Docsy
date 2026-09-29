@@ -21,7 +21,6 @@ import {
   type AuthMode,
 } from "@/components/auth/auth-dialog-provider"
 import { DocsyLogo } from "@/components/brand/docsy-logo"
-import { SearchDocsButton } from "@/components/search/search-docs-button"
 
 function MobileNav({
   items,
@@ -70,12 +69,7 @@ function MobileNav({
             <span className="sr-only">Docsy navigation</span>
           </SheetTitle>
         </SheetHeader>
-        <div className="px-4">
-          <SearchDocsButton
-            className="w-full justify-start"
-            showShortcut={false}
-          />
-        </div>
+
         <nav className="flex flex-col gap-1 px-4">
           {items.map((item) => (
             <SheetClose
